@@ -1,0 +1,8 @@
+{
+    "redis": {
+        "host": "103.57.220.118",
+        "port": 6379,
+        "password": "4t6PN9SJrXcN2ZLR47cnzG93wCLZa2W7"
+    },
+    "storage": "./storage"
+}
