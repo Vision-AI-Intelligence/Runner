@@ -1,6 +1,7 @@
 from typing import IO
 from celery import Celery
 from runner.config import Config
+import redis
 
 
 class BackgroundJob:
@@ -11,6 +12,9 @@ class BackgroundJob:
         if BackgroundJob.__instance == None:
             BackgroundJob()
         return BackgroundJob.__instance
+
+    def set_status(self, task_id, key, value):
+        self.redis_app.hset(task_id, key, value)
 
     def __init__(self):
         if BackgroundJob.__instance != None:
@@ -24,3 +28,5 @@ class BackgroundJob:
                 'tasks',
                 backend=endpoint,
                 broker=endpoint,)
+            self.redis_app = redis.Redis(
+                host=config['redis']['host'], port=config['redis']['port'], password=config['redis']['password'])

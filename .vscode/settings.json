@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\nguye\\anaconda3\\python.exe"
+    "python.pythonPath": "C:\\Users\\nguye\\anaconda3\\python.exe",
+    "activestate.promptRuntimeCreation": false
 }
