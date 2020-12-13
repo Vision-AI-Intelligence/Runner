@@ -91,7 +91,7 @@ def unzip_file(pid: str, response: Response, file: UnzippedFile = Body(...)):
     return {"jobId": job.id}
 
 
-@router.delete("/project/{pid}")
+@router.delete("/project/{pid}/rm")
 def delete_file(pid: str, response: Response, file: DeletedFile = Body(...)):
     project_loc = os.path.join(config['storage'], pid)
     if not os.path.exists(project_loc):
