@@ -20,6 +20,26 @@ def listing():
     return {"projects": projectIds}
 
 
+@router.get("/project/{pid}/walk")
+def file_walk(pid: str, dir: str, response: Response):
+    project_loc = os.path.join(config['storage'], pid)
+    if not os.path.exists(project_loc):
+        response.status_code = status.HTTP_406_NOT_ACCEPTABLE
+        return {"message": "Project [{}] did not exist".format(pid)}
+    files = []
+    folders = []
+    project_loc = os.path.join(project_loc, dir)
+    for file in os.listdir(project_loc):
+        if os.path.isfile(os.path.join(project_loc, file)):
+            files.append(file)
+        else:
+            folders.append(file)
+    return {
+        "files": files,
+        "folders": folders
+    }
+
+
 @router.post("/project/{pid}")
 def create_project(pid: str, response: Response):
     project_loc = os.path.join(config['storage'], pid)

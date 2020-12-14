@@ -2,6 +2,7 @@ from typing import IO
 from celery import Celery
 from runner.config import Config
 import redis
+from celery import current_app
 
 
 class BackgroundJob:
@@ -15,6 +16,10 @@ class BackgroundJob:
 
     def set_status(self, task_id, key, value):
         self.redis_app.hset(task_id, key, value)
+
+    def revoke_job(self, task_id):
+        self.redis_app.hset(task_id, 'status', 'revoked')
+        current_app.control.revoke(task_id, terminate=True)
 
     def __init__(self):
         if BackgroundJob.__instance != None:
