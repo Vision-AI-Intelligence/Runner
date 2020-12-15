@@ -39,7 +39,7 @@ class IOJob(BackgroundJob):
         BackgroundJob.get_instance().set_status(task_id, "status", "done")
 
     @app.task(bind=True)
-    def download(self, url, filename):
+    def download(self, url, filename, unzip=False):
         print("Downloading...")
         task_id = self.request.id
         print(task_id)
@@ -54,3 +54,11 @@ class IOJob(BackgroundJob):
                 downloaded_size += len(data)
                 BackgroundJob.get_instance().set_status(
                     task_id, "downloaded_size", downloaded_size)
+        if unzip:
+            BackgroundJob.get_instance().set_status(task_id, "status", "unzipping")
+            try:
+                with zipfile.ZipFile(filename) as zip_ref:
+                    zip_ref.extractall(os.path.dirname(filename))
+                BackgroundJob.get_instance().set_status(task_id, "status", "done")
+            except:
+                BackgroundJob.get_instance().set_status(task_id, "status", "error")

@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -8,6 +9,7 @@ class DeletedFile(BaseModel):
 class DownloadedFile(BaseModel):
     url: str
     filename: str
+    section: Optional[str] = 'data'
 
 
 class UnzippedFile(BaseModel):

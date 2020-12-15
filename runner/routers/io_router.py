@@ -87,7 +87,7 @@ def download_data(pid: str, response: Response, file: DownloadedFile = Body(...)
         response.status_code = status.HTTP_406_NOT_ACCEPTABLE
         return {"message": "Project [{}] did not exist".format(pid)}
     job = ioJob.download.delay(file.url, os.path.join(
-        project_loc, 'data', file.filename))
+        project_loc, file.section, file.filename))
     return {"jobId": job.id}
 
 
