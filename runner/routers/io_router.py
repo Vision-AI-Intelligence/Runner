@@ -14,7 +14,7 @@ def ping():
     return {"message": "Hello World"}
 
 
-@router.get("/project")
+@router.get("/project/listing")
 def listing():
     projectIds = os.listdir(config['storage'])
     return {"projects": projectIds}
@@ -87,7 +87,7 @@ def download_data(pid: str, response: Response, file: DownloadedFile = Body(...)
         response.status_code = status.HTTP_406_NOT_ACCEPTABLE
         return {"message": "Project [{}] did not exist".format(pid)}
     job = ioJob.download.delay(file.url, os.path.join(
-        project_loc, file.section, file.filename))
+        project_loc, file.filename))
     return {"jobId": job.id}
 
 
@@ -97,7 +97,7 @@ def unzip_file(pid: str, response: Response, file: UnzippedFile = Body(...)):
     if not os.path.exists(project_loc):
         response.status_code = status.HTTP_406_NOT_ACCEPTABLE
         return {"message": "Project [{}] did not exist".format(pid)}
-    job = ioJob.zip.delay(os.path.join(project_loc, 'data', file.filename))
+    job = ioJob.zip.delay(os.path.join(project_loc, file.filename))
     return {"jobId": job.id}
 
 
@@ -107,16 +107,20 @@ def unzip_file(pid: str, response: Response, file: UnzippedFile = Body(...)):
     if not os.path.exists(project_loc):
         response.status_code = status.HTTP_406_NOT_ACCEPTABLE
         return {"message": "Project [{}] did not exist".format(pid)}
-    job = ioJob.unzip.delay(os.path.join(project_loc, 'data', file.filename))
+    job = ioJob.unzip.delay(os.path.join(project_loc, file.filename))
     return {"jobId": job.id}
 
 
 @router.delete("/project/{pid}/rm")
-def delete_file(pid: str, response: Response, file: DeletedFile = Body(...)):
+def delete_file(pid: str, response: Response, file: str):
     project_loc = os.path.join(config['storage'], pid)
     if not os.path.exists(project_loc):
         response.status_code = status.HTTP_406_NOT_ACCEPTABLE
         return {"message": "Project [{}] did not exist".format(pid)}
-    shutil.rmtree(os.path.join(project_loc, 'data',
-                               file.filename), ignore_errors=True)
-    return {"message": "Delete [{}]".format(file.filename)}
+    if os.path.isdir(os.path.join(project_loc, file)):
+        shutil.rmtree(os.path.join(project_loc,
+                                   file), ignore_errors=True)
+    else:
+        os.remove(os.path.join(project_loc, file))
+
+    return {"message": "Delete [{}]".format(file)}
