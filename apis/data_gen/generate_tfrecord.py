@@ -37,8 +37,8 @@ def create_tf_example(group, path, category_idx):
         xmaxs.append(float(row['xmax']) / width)
         ymins.append(float(row['ymin']) / height)
         ymaxs.append(float(row['ymax']) / height)
-        classes_text.append(row['class'].encode('utf8'))
-        classes.append(category_idx[row['class']])
+        classes_text.append(str(row['class']).encode('utf8'))
+        classes.append(category_idx[str(row['class'])])
 
     tf_example = tf.train.Example(features=tf.train.Features(feature={
         'image/height': dataset_util.int64_feature(height),

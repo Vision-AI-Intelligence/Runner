@@ -92,7 +92,7 @@ def download_data(pid: str, response: Response, file: DownloadedFile = Body(...)
 
 
 @router.post("/project/{pid}/zip")
-def unzip_file(pid: str, response: Response, file: UnzippedFile = Body(...)):
+def zip_file(pid: str, response: Response, file: UnzippedFile = Body(...)):
     project_loc = os.path.join(config['storage'], pid)
     if not os.path.exists(project_loc):
         response.status_code = status.HTTP_406_NOT_ACCEPTABLE

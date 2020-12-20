@@ -34,8 +34,10 @@ def gen_tfrecord(pid: str, response: Response, data_path: DatasetPath = Body(...
         project_loc, 'data', data_path.path_to_images)
     data_path.path_to_label_map = os.path.join(
         project_loc, 'data', data_path.path_to_label_map)
-    job = mlJob.gen_tfrecord.delay(
-        data_path.path_to_images, data_path.path_to_annotation, data_path.path_to_label_map, data_path.path_to_tfrecord)
+    data_path.path_to_tfrecord = os.path.join(
+        project_loc, 'data', data_path.path_to_tfrecord)
+    job = mlJob.gen_tfrecord.delay(pid,
+                                   data_path.path_to_images, data_path.path_to_annotation, data_path.path_to_label_map, data_path.path_to_tfrecord)
     return {"jobId": job.id}
 
 
