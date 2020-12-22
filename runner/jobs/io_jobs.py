@@ -1,6 +1,7 @@
 from runner.background_job import BackgroundJob
 import requests
 import zipfile
+import tarfile
 import os
 import shutil
 
@@ -17,8 +18,12 @@ class IOJob(BackgroundJob):
         BackgroundJob.get_instance().set_status(task_id, "info", "Unzip: "+filename)
         BackgroundJob.get_instance().set_status(task_id, "status", "start")
         try:
-            with zipfile.ZipFile(filename) as zip_ref:
-                zip_ref.extractall(os.path.dirname(filename))
+            if filename.endwiths(".zip"):
+                with zipfile.ZipFile(filename) as zip_ref:
+                    zip_ref.extractall(os.path.dirname(filename))
+            else:
+                with tarfile.TarFile(filename) as tar_ref:
+                    tar_ref.extractall(os.path.dirname(filename))
         except:
             BackgroundJob.get_instance().set_status(task_id, "status", "error")
             return
@@ -75,11 +80,16 @@ class IOJob(BackgroundJob):
             BackgroundJob.get_instance().set_status(task_id, "status", "done")
         except:
             BackgroundJob.get_instance().set_status(task_id, "status", "error")
+            return
         if unzip:
             BackgroundJob.get_instance().set_status(task_id, "status", "unzipping")
             try:
-                with zipfile.ZipFile(filename) as zip_ref:
-                    zip_ref.extractall(os.path.dirname(filename))
+                if filename.endwiths(".zip"):
+                    with zipfile.ZipFile(filename) as zip_ref:
+                        zip_ref.extractall(os.path.dirname(filename))
+                else:
+                    with tarfile.TarFile(filename) as tar_ref:
+                        tar_ref.extractall(os.path.dirname(filename))
                 BackgroundJob.get_instance().set_status(task_id, "status", "done")
             except:
                 BackgroundJob.get_instance().set_status(task_id, "status", "error")

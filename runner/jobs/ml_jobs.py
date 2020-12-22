@@ -4,6 +4,9 @@ from apis.data_gen.xml_to_csv import voc_to_csv
 from apis.data_gen.generate_tfrecord import gen_tfrecord
 import uuid
 import os
+from apis.train_tf2.model_main_tf2 import train
+from apis.train_tf2.exporter_main_v2 import export_model
+from apis.inference.detect_objects import inference
 
 
 class MLJob(BackgroundJob):
@@ -28,3 +31,44 @@ class MLJob(BackgroundJob):
         #    BackgroundJob.get_instance().set_status(task_id, "status", "error")
         #    return
         BackgroundJob.get_instance().set_status(task_id, "status", "done")
+
+    @app.task(bind=True)
+    def train_model(self, path_to_saved_model, path_to_pipeline_config):
+        task_id = self.request.id
+        BackgroundJob.get_instance().set_status(task_id, "type", "ml")
+        BackgroundJob.get_instance().set_status(
+            task_id, "info", "Training")
+        BackgroundJob.get_instance().set_status(task_id, "status", "start")
+        try:
+            train(path_to_saved_model, path_to_pipeline_config)
+            BackgroundJob.get_instance().set_status(task_id, "status", "done")
+        except:
+            BackgroundJob.get_instance().set_status(task_id, "status", "error")
+
+    @app.task(bind=True)
+    def export_model(self, path_to_checkpoint, path_to_pipeline_config, path_to_export):
+        task_id = self.request.id
+        BackgroundJob.get_instance().set_status(task_id, "type", "ml")
+        BackgroundJob.get_instance().set_status(
+            task_id, "info", "Exporting")
+        BackgroundJob.get_instance().set_status(task_id, "status", "start")
+        try:
+            export_model(path_to_checkpoint,
+                         path_to_pipeline_config, path_to_export)
+            BackgroundJob.get_instance().set_status(task_id, "status", "done")
+        except:
+            BackgroundJob.get_instance().set_status(task_id, "status", "error")
+
+    @app.task(bind=True)
+    def inference_model(self, model_path, path_to_labelmap, images_dir, output_directory):
+        task_id = self.request.id
+        BackgroundJob.get_instance().set_status(task_id, "type", "ml")
+        BackgroundJob.get_instance().set_status(
+            task_id, "info", "Inferencing")
+        BackgroundJob.get_instance().set_status(task_id, "status", "start")
+        try:
+            inference(model_path, path_to_labelmap,
+                      images_dir, output_directory)
+            BackgroundJob.get_instance().set_status(task_id, "status", "done")
+        except:
+            BackgroundJob.get_instance().set_status(task_id, "status", "error")
