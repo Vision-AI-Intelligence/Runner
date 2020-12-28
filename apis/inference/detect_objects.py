@@ -59,42 +59,41 @@ def DetectImagesFromFolder(detector, images_dir, save_output=False, output_dir='
 
 def inference(model_path, path_to_labelmap, images_dir, output_directory):
 
-    parser = argparse.ArgumentParser(
-        description='Object Detection from Images or Video')
-    parser.add_argument('--model_path', help='Path to frozen detection model',
-                        default='models/efficientdet_d0_coco17_tpu-32/saved_model')
-    parser.add_argument('--path_to_labelmap', help='Path to labelmap (.pbtxt) file',
-                        default='models/mscoco_label_map.pbtxt')
-    parser.add_argument('--class_ids', help='id of classes to detect, expects string with ids delimited by ","',
-                        type=str, default=None)  # example input "1,3" to detect person and car
-    parser.add_argument(
-        '--threshold', help='Detection Threshold', type=float, default=0.4)
-    parser.add_argument(
-        '--images_dir', help='Directory to input images)', default='data/samples/images/')
-    parser.add_argument('--video_path', help='Path to input video)',
-                        default='data/samples/pedestrian_test.mp4')
-    parser.add_argument(
-        '--output_directory', help='Path to output images and video', default='data/samples/output')
-    parser.add_argument('--video_input', help='Flag for video input, default: False',
-                        action='store_true')  # default is false
-    parser.add_argument('--save_output', help='Flag for save images and video with detections visualized, default: False',
-                        action='store_true')  # default is false
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser(
+    #     description='Object Detection from Images or Video')
+    # parser.add_argument('--model_path', help='Path to frozen detection model',
+    #                     default='models/efficientdet_d0_coco17_tpu-32/saved_model')
+    # parser.add_argument('--path_to_labelmap', help='Path to labelmap (.pbtxt) file',
+    #                     default='models/mscoco_label_map.pbtxt')
+    # parser.add_argument('--class_ids', help='id of classes to detect, expects string with ids delimited by ","',
+    #                     type=str, default=None)  # example input "1,3" to detect person and car
+    # parser.add_argument(
+    #     '--threshold', help='Detection Threshold', type=float, default=0.4)
+    # parser.add_argument(
+    #     '--images_dir', help='Directory to input images)', default='data/samples/images/')
+    # parser.add_argument('--video_path', help='Path to input video)',
+    #                     default='data/samples/pedestrian_test.mp4')
+    # parser.add_argument(
+    #     '--output_directory', help='Path to output images and video', default='data/samples/output')
+    # parser.add_argument('--video_input', help='Flag for video input, default: False',
+    #                     action='store_true')  # default is false
+    # parser.add_argument('--save_output', help='Flag for save images and video with detections visualized, default: False',
+    #                     action='store_true')  # default is false
+    # args = parser.parse_args()
 
-    if args.save_output:
-        if not os.path.exists(output_directory):
-            os.makedirs(output_directory)
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
 
     # instance of the class DetectorTF2
     detector = DetectorTF2(model_path, path_to_labelmap,
-                           threshold=args.threshold)
+                           threshold=0.4)
 
-    if args.video_input:
-        DetectFromVideo(detector, args.video_path,
-                        save_output=args.save_output, output_dir=args.output_directory)
-    else:
-        DetectImagesFromFolder(detector, images_dir,
-                               save_output=True, output_dir=output_directory)
+    # if args.video_input:
+    #     DetectFromVideo(detector, args.video_path,
+    #                     save_output=args.save_output, output_dir=args.output_directory)
+    # else:
+    DetectImagesFromFolder(detector, images_dir,
+                           save_output=True, output_dir=output_directory)
 
     print("Done ...")
     # cv2.destroyAllWindows()

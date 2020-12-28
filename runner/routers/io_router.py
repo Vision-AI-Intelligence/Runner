@@ -1,3 +1,4 @@
+from starlette.responses import FileResponse
 from runner.routers.DTOs.io_dto import DeletedFile, DownloadedFile, UnzippedFile
 from fastapi import APIRouter, UploadFile, File, status, Response, Body
 from runner.config import Config
@@ -124,3 +125,12 @@ def delete_file(pid: str, response: Response, file: str):
         os.remove(os.path.join(project_loc, file))
 
     return {"message": "Delete [{}]".format(file)}
+
+
+@router.get("/project/{pid}/download")
+def download_file(pid: str, dir: str, response: Response):
+    project_loc = os.path.join(config['storage'], pid)
+    if not os.path.exists(project_loc):
+        response.status_code = status.HTTP_406_NOT_ACCEPTABLE
+        return {"message": "Project [{}] did not exist".format(pid)}
+    return FileResponse(path=os.path.join(project_loc, 'data', dir))

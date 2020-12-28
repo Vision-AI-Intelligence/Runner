@@ -16,29 +16,12 @@
 
 from object_detection import model_lib_v2
 import tensorflow.compat.v2 as tf
-from absl import flags
-import os
-os.environ['CUDA_VISIBLE_DEVICES'] = ''
-
-r"""Creates and runs TF2 object detection models.
-
-For local training/evaluation run:
-PIPELINE_CONFIG_PATH=path/to/pipeline.config
-MODEL_DIR=/tmp/model_outputs
-NUM_TRAIN_STEPS=10000
-SAMPLE_1_OF_N_EVAL_EXAMPLES=1
-python model_main_tf2.py -- \
-  --model_dir=$MODEL_DIR --num_train_steps=$NUM_TRAIN_STEPS \
-  --sample_1_of_n_eval_examples=$SAMPLE_1_OF_N_EVAL_EXAMPLES \
-  --pipeline_config_path=$PIPELINE_CONFIG_PATH \
-  --alsologtostderr
-"""
 
 
 def train(model_dir, pipeline_config_path):
 
     tf.config.set_soft_device_placement(True)
-
-    model_lib_v2.eval_continuously(
-        pipeline_config_path=pipeline_config_path,
-        model_dir=model_dir)
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx")
+    print(model_dir)
+    print(pipeline_config_path)
+    model_lib_v2.train_loop(pipeline_config_path, model_dir=model_dir)

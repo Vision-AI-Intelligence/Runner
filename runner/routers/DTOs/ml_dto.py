@@ -11,3 +11,18 @@ class DatasetPath(BaseModel):
 class PretrainedModel(BaseModel):
     url: str
     name: str
+
+
+class TrainParams(BaseModel):
+    model_dir: str
+    pipeline_dir: str
+
+
+class ConfigPipelineRequestModel(BaseModel):
+    config: str
+
+
+class InferenceRequestModel(BaseModel):
+    input_dir: str
+    output_dir: str
+    label_map_dir: str

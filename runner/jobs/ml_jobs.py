@@ -39,11 +39,12 @@ class MLJob(BackgroundJob):
         BackgroundJob.get_instance().set_status(
             task_id, "info", "Training")
         BackgroundJob.get_instance().set_status(task_id, "status", "start")
-        try:
-            train(path_to_saved_model, path_to_pipeline_config)
-            BackgroundJob.get_instance().set_status(task_id, "status", "done")
-        except:
-            BackgroundJob.get_instance().set_status(task_id, "status", "error")
+        # try:
+        print(path_to_pipeline_config)
+        train(path_to_saved_model, path_to_pipeline_config)
+        BackgroundJob.get_instance().set_status(task_id, "status", "done")
+        # except:
+        #    BackgroundJob.get_instance().set_status(task_id, "status", "error")
 
     @app.task(bind=True)
     def export_model(self, path_to_checkpoint, path_to_pipeline_config, path_to_export):
@@ -64,11 +65,11 @@ class MLJob(BackgroundJob):
         task_id = self.request.id
         BackgroundJob.get_instance().set_status(task_id, "type", "ml")
         BackgroundJob.get_instance().set_status(
-            task_id, "info", "Inferencing")
+            task_id, "info", "Inferring")
         BackgroundJob.get_instance().set_status(task_id, "status", "start")
-        try:
-            inference(model_path, path_to_labelmap,
-                      images_dir, output_directory)
-            BackgroundJob.get_instance().set_status(task_id, "status", "done")
-        except:
-            BackgroundJob.get_instance().set_status(task_id, "status", "error")
+        # try:
+        inference(model_path, path_to_labelmap,
+                  images_dir, output_directory)
+        BackgroundJob.get_instance().set_status(task_id, "status", "done")
+        # except:
+        #    BackgroundJob.get_instance().set_status(task_id, "status", "error")
